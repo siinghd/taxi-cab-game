@@ -2,37 +2,42 @@
 #include <stdio.h>
 #include <string.h>
 #include "initialConfig.h"
-#ifndef MYLIB_H
-#define MYLIB_H
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 #define HOLE 1
 #define SOURCE 2
-#define SO_WIDTH 20
-#define SO_HEIGHT 10
- 
- struct strada {
-     int tipoCella;
-     int numeroAttraversamenti;
-     long tempoDiAttraversamento;
-     int maxCapacityOfTaxi;
-     int topCella;
-     int idCella;
+#define SO_WIDTH 60
+#define SO_HEIGHT 20
+#define ID_READY_GO 0
+#define ID_KIDS_READY 1
+
+struct strada {
+    int tipoCella;
+    int numeroAttraversamenti;
+    long tempoDiAttraversamento;
+    int maxCapacityOfTaxi;
+    //int topCella;
+    int idCella;
+    int taxisToBeGenerated;
 };
 struct condivisa {
     int numOfHoles;
     int aborted;
-    int success ;
+    int success;
     int inevasi;
     int numRichieste;
-    pid_t proccNumRichieste ; 
-    pid_t longhestRoute ; 
-    pid_t longhestRouteCell ; 
-    int longDurataTempo;
-    int longRouteCell;
-    pid_t so_sources_kids [SO_SOURCES]; 
-    pid_t so_taxis[SO_TAXI]; 
+    pid_t procNumRichieste;
+    pid_t proclonghestRouteTime;
+    pid_t proclonghestRouteCell;
+    int longhestRouteTime;
+    int longhestRouteCell;
+    int so_sources_kids_length;
+    pid_t* so_sources_kids;
+    int so_taxis_length;
+    pid_t* so_taxis;
 
-    struct strada  cityMap [SO_WIDTH][SO_HEIGHT];
+    struct strada cityMap[SO_HEIGHT][SO_WIDTH];
 };
 /* message structure */
 struct message {
@@ -42,14 +47,33 @@ struct message {
     int xDestination;
     int yDestination;
 };
-struct timespec now;
+/* message structure */
+struct messageTaxi {
+    long mtype;
+    pid_t taxiPid;
+    int longhest_route_byTime;
+    int number_request;
+    int longhest_route_byCell;
+    ;
+};
+struct timespec ts;
+typedef struct coor
+
+{
+    int x;
+    int y;
+} coor;
 
 int getRandomNumberInRange(int min, int max);
-long getRandomTimeInRangeNano (long min, long max);
-void getHoleInRoad(int rows,int cols,struct strada matrix[rows][cols],int numHoles);
-void setTopCells(int rows,int cols,struct strada matrix[rows][cols],int topCells);
-void setStations(int rows,int cols,struct strada matrix[rows][cols],int stations);
+long getRandomTimeInRangeNano(long min, long max);
+void getHoleInRoad(int rows, int cols, struct strada matrix[rows][cols], int numHoles);
+void setTopCells(int rows, int cols, struct strada matrix[rows][cols], int topCells);
+void setStations(int rows, int cols, struct strada matrix[rows][cols], int stations);
+void setTaxis(int rows, int cols, struct strada matrix[rows][cols], int numTaxi);
+void printMap(int rows, int cols, struct strada matrix[rows][cols]);
+void generateRowAndCol(int * randrow , int *randcol ,  int rows , int cols);
+void test_Error();
+void inizializzaMatriceMappa(int rows, int cols, struct strada matrix[rows][cols], int semId, 
+int numHoles, int topCellsLen, int sourcesLen, int taxisLen,long so_timensec_min , long so_timensec_max,int so_cap_min,int so_cap_max);
 
-void inizializzaMatriceMappa(int rows,int cols,struct strada matrix[rows][cols],int numHoles,int semId);
-
-#endif /* #MYLIB_H */
+#endif /* #UTILITIES_H */
